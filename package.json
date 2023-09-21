@@ -9,14 +9,11 @@
     "web": "expo start --web"
   },
   "dependencies": {
-    "@expo/config-plugins": "~7.2.2",
-    "@expo/prebuild-config": "~6.2.4",
     "@react-native-community/blur": "^4.3.2",
     "@react-navigation/native": "^6.1.7",
     "@react-navigation/stack": "^6.3.17",
     "d3-shape": "^3.2.0",
     "expo": "~49.0.10",
-    "expo-app-loading": "^2.1.1",
     "expo-blur": "~12.4.1",
     "expo-dev-client": "^2.4.10",
     "expo-font": "~11.4.0",
