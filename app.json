@@ -2,20 +2,23 @@
   "expo": {
     "name": "PuebloApp",
     "slug": "PuebloApp",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/logoPueblo.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/logoPueblo.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#0C0C0C"
     },
     "assetBundlePatterns": [
+    
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.mg17461.PuebloApp",
+      "buildNumber": "4"
     },
     "android": {
       "adaptiveIcon": {
@@ -25,6 +28,11 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "becf3051-a5ba-4ea5-a4b8-bd1cf2e4b057"
+      }
     }
   }
 }
