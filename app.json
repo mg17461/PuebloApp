@@ -12,13 +12,12 @@
       "backgroundColor": "#0C0C0C"
     },
     "assetBundlePatterns": [
-    
       "**/*"
     ],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.mg17461.PuebloApp",
-      "buildNumber": "4"
+      "buildNumber": "7"
     },
     "android": {
       "adaptiveIcon": {
@@ -33,6 +32,9 @@
       "eas": {
         "projectId": "becf3051-a5ba-4ea5-a4b8-bd1cf2e4b057"
       }
-    }
+    },
+    "plugins": [
+      "sentry-expo"
+    ]
   }
 }
