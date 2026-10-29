@@ -79,3 +79,48 @@ describe('input parsing', () => {
     expect(parseMaxScore('100')).toBe(100);
   });
 });
+
+describe('dealer', () => {
+  const { dealerFor } = require('./logic');
+  const three = [{ id: 'a', name: 'A' }, { id: 'b', name: 'B' }, { id: 'c', name: 'C' }];
+  const rounds = (n) => Array.from({ length: n }, () => ({ scores: {} }));
+
+  it('starts with the first player and moves one seat per round', () => {
+    expect(dealerFor({ players: three, rounds: rounds(0) })).toBe('a');
+    expect(dealerFor({ players: three, rounds: rounds(1) })).toBe('b');
+    expect(dealerFor({ players: three, rounds: rounds(3) })).toBe('a');
+  });
+
+  it('follows a chosen dealer, and goes back on undo', () => {
+    const game = { players: three, rounds: rounds(2), dealerStart: { playerId: 'c', round: 2 } };
+    expect(dealerFor(game)).toBe('c');
+    expect(dealerFor({ ...game, rounds: rounds(3) })).toBe('a');
+    expect(dealerFor({ ...game, rounds: rounds(1) })).toBe('b');
+  });
+
+  it('copes with the starting dealer being removed', () => {
+    expect(dealerFor({ players: three, rounds: rounds(1), dealerStart: { playerId: 'zz', round: 0 } })).toBe('b');
+    expect(dealerFor({ players: [], rounds: [] })).toBeNull();
+  });
+});
+
+describe('stats', () => {
+  const { gameRecord, playerStats } = require('./logic');
+  const game = { id: 'g1', players, rounds: [{ scores: { a: 50, b: 20 } }] };
+
+  it('records the winner and final standings', () => {
+    const record = gameRecord(game, 50, 1);
+    expect(record).toMatchObject({ id: 'g1', winnerName: 'Ana', rounds: 1 });
+    expect(record.results).toEqual([{ name: 'Ana', total: 50 }, { name: 'Beto', total: 20 }]);
+  });
+
+  it('adds up wins and averages by name', () => {
+    const r1 = gameRecord(game, 50);
+    const r2 = { ...r1, id: 'g2', winnerName: 'beto', results: [{ name: 'beto', total: 60 }, { name: 'ANA', total: 10 }] };
+    const stats = playerStats([r1, r2]);
+    expect(stats.map((s) => [s.name, s.played, s.wins, s.average])).toEqual([
+      ['Ana', 2, 1, 30],
+      ['Beto', 2, 1, 40],
+    ]);
+  });
+});

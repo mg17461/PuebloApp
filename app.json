@@ -4,8 +4,8 @@
     "slug": "PuebloApp",
     "version": "1.1.0",
     "orientation": "portrait",
-    "icon": "./assets/logoPueblo.png",
-    "userInterfaceStyle": "light",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "automatic",
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.mg17461.PuebloApp",
@@ -14,7 +14,7 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "backgroundColor": "#B5412C"
       }
     },
     "web": {
@@ -29,10 +29,14 @@
       [
         "expo-splash-screen",
         {
-          "image": "./assets/logoPueblo.png",
-          "imageWidth": 200,
+          "image": "./assets/splash-icon.png",
+          "imageWidth": 120,
           "resizeMode": "contain",
-          "backgroundColor": "#0C0C0C"
+          "backgroundColor": "#F6F3EE",
+          "dark": {
+            "image": "./assets/splash-icon.png",
+            "backgroundColor": "#121110"
+          }
         }
       ],
       "expo-font",

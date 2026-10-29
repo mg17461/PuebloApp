@@ -16,7 +16,8 @@ npm run doctor   # Expo health checks
 - `src/game/logic.js` — pure scoring functions (totals, standings, history, game over). Tested in `logic.test.js`.
 - `src/game/store.js` — the single game store (Zustand), saved to the device with AsyncStorage.
 - `src/screens/` — one file per screen. Screens read and write the store; they don't pass game data through navigation.
-- `src/components/` — shared UI (header, buttons, score bar).
+- `src/components/ui.js` — shared UI building blocks (buttons, cards, avatars, progress bars, footer).
+- `src/theme.js` — design tokens: light and dark colours, type scale, spacing. Use `useStyles` to build themed styles.
 
 ## Crash reporting (Sentry)
 
