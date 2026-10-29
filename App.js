@@ -1,67 +1,69 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import * as SplashScreen from 'expo-splash-screen';
-import * as Font from 'expo-font';
+import { useFonts } from 'expo-font';
+import { StatusBar } from 'expo-status-bar';
+import * as Sentry from '@sentry/react-native';
 import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
-import HomeScreen from './HomeScreen';
-import PlayerInputScreen from './PlayerInputScreen';
-import ScoreScreen from './ScoreScreen';
-import ChangeSettings from './ChangeSettings';
-import { ScoreProvider } from './components/ScoreContext';
-import PlotScores from './PlotScores';
-import EditScoresScreen from './EditScoresScreen';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { useGameStore } from './src/game/store';
+import HomeScreen from './src/screens/HomeScreen';
+import PlayersScreen from './src/screens/PlayersScreen';
+import ScoreboardScreen from './src/screens/ScoreboardScreen';
+import EnterRoundScreen from './src/screens/EnterRoundScreen';
+import HistoryScreen from './src/screens/HistoryScreen';
+import SettingsScreen from './src/screens/SettingsScreen';
 
-const Stack = createStackNavigator();
+// Crash reporting is only turned on when a DSN is set (see README).
+const sentryDsn = process.env.EXPO_PUBLIC_SENTRY_DSN;
+if (sentryDsn) {
+  Sentry.init({ dsn: sentryDsn, enabled: !__DEV__ });
+}
 
-export default function App() {
-  const [fontsLoaded, setFontsLoaded] = useState(false);
+SplashScreen.preventAutoHideAsync().catch(() => {});
+
+const Stack = createNativeStackNavigator();
+
+function useStoreHydrated() {
+  const [hydrated, setHydrated] = useState(useGameStore.persist.hasHydrated());
+  useEffect(() => {
+    const unsubscribe = useGameStore.persist.onFinishHydration(() => setHydrated(true));
+    setHydrated(useGameStore.persist.hasHydrated());
+    return unsubscribe;
+  }, []);
+  return hydrated;
+}
+
+function App() {
+  const [fontsLoaded, fontError] = useFonts({
+    'Inter-Bold': require('./assets/fonts/Inter-Bold.ttf'),
+    'Inter-SemiBold': require('./assets/fonts/Inter-SemiBold.ttf'),
+    'Inter-Medium': require('./assets/fonts/Inter-Medium.ttf'),
+  });
+  const hydrated = useStoreHydrated();
+  const ready = (fontsLoaded || fontError) && hydrated;
 
   useEffect(() => {
-    // Prevent the splash screen from auto-hiding
-    SplashScreen.preventAutoHideAsync()
-      .then(() => {
-        loadFonts();
-      })
-      .catch((error) => {
-        console.warn("Failed to prevent splash screen auto-hiding:", error);
-        loadFonts();
-      });
-  }, []);
+    if (ready) SplashScreen.hideAsync().catch(() => {});
+  }, [ready]);
 
-  const loadFonts = async () => {
-    console.log("Starting font loading");
-    try {
-      await Font.loadAsync({
-        'Inter-Black': require('./assets/fonts/Inter-Black.ttf'),
-        'Inter-Bold': require('./assets/fonts/Inter-Bold.ttf'),
-        'Inter-SemiBold': require('./assets/fonts/Inter-SemiBold.ttf'),
-        'Inter-Medium': require('./assets/fonts/Inter-Medium.ttf'),
-      });
-      setFontsLoaded(true);
-      // Hide the splash screen now that the fonts have loaded
-      SplashScreen.hideAsync();
-    } catch (error) {
-      console.warn(error);
-      SplashScreen.hideAsync();
-    }
-  };
-
-  if (!fontsLoaded) {
-    return null; // or you can render some kind of placeholder while fonts are loading
-  }
+  if (!ready) return null;
 
   return (
-    <ScoreProvider>
+    <SafeAreaProvider>
+      <StatusBar style="dark" />
       <NavigationContainer>
-        <Stack.Navigator initialRouteName="Home" screenOptions={{headerShown: false}}>
+        <Stack.Navigator initialRouteName="Home" screenOptions={{ headerShown: false }}>
           <Stack.Screen name="Home" component={HomeScreen} />
-          <Stack.Screen name="PlayerInput" component={PlayerInputScreen} />
-          <Stack.Screen name="ScoreScreen" component={ScoreScreen} />
-          <Stack.Screen name="Settings" component={ChangeSettings} />
-          <Stack.Screen name="Plot" component={PlotScores} />
-          <Stack.Screen name="EditScores" component={EditScoresScreen} />
+          <Stack.Screen name="Players" component={PlayersScreen} />
+          <Stack.Screen name="Scoreboard" component={ScoreboardScreen} />
+          <Stack.Screen name="EnterRound" component={EnterRoundScreen} />
+          <Stack.Screen name="History" component={HistoryScreen} />
+          <Stack.Screen name="Settings" component={SettingsScreen} />
         </Stack.Navigator>
       </NavigationContainer>
-    </ScoreProvider>
+    </SafeAreaProvider>
   );
 }
+
+export default Sentry.wrap(App);
